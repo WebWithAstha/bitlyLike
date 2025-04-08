@@ -10,7 +10,11 @@ app.use(express.urlencoded({extended:true,limit:"10mb"}))
 app.use(cookieParser());
 
 import authRoutes from './routes/auth.routes.js';
+import linkRoutes from './routes/link.routes.js';
+import { handleRedirect } from './controllers/link.controllers.js';
+app.get('/:shortCode', handleRedirect);
 app.use('/api/auth',authRoutes);
+app.use('/api/links', linkRoutes);
 
 
 export default app;
