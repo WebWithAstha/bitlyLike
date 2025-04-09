@@ -75,39 +75,14 @@ export const handleRedirect = catchAsyncErrors(async (req, res) => {
 });
 
 
-export const getAllLinks = catchAsyncErrors(async (req, res) => {
+export const getAllLinks = async (req, res) => {
   try {
     const links = await Link.find({ userId: req.user.id }).sort({ createdAt: -1 });
     res.json(links);
   } catch (err) {
+    console.log(err)
     res.status(500).json({ message: 'Server error', err });
   }
-});
+};
 
-export const getLinkAnalytics = catchAsyncErrors(async (req, res) => {
-  try {
-    const { linkId } = req.params;
-    const clicks = await Click.find({ linkId });
-
-    const deviceMap = {};
-    const browserMap = {};
-    const dateMap = {};
-
-    clicks.forEach(click => {
-      const dateKey = new Date(click.timestamp).toLocaleDateString();
-      deviceMap[click.device] = (deviceMap[click.device] || 0) + 1;
-      browserMap[click.browser] = (browserMap[click.browser] || 0) + 1;
-      dateMap[dateKey] = (dateMap[dateKey] || 0) + 1;
-    });
-
-    res.json({
-      totalClicks: clicks.length,
-      deviceStats: deviceMap,
-      browserStats: browserMap,
-      clickTimeline: dateMap,
-    });
-  } catch (err) {
-    res.status(500).json({ message: 'Error getting analytics' });
-  }
-});
 

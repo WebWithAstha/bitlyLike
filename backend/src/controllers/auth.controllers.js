@@ -29,7 +29,7 @@ export const login = catchAsyncErrors(async (req, res, next) => {
   const token = await user.generateAndSaveToken(res);
   return res
     .status(202)
-    .json({ message: "Login successful", success: true, token });
+    .json({ message: "Login successful", user, success: true, token });
 });
 
 export const logout = catchAsyncErrors(async (req, res, next) => {
@@ -37,4 +37,20 @@ export const logout = catchAsyncErrors(async (req, res, next) => {
     res.status(202).json({ message: "You are not logged in.", success: false });
   res.clearCookie("token");
   res.status(202).json({ message: "Logout successfull", success: false });
+});
+
+export const fetchUser = catchAsyncErrors(async (req, res, next) => {
+  if (!req.user) {
+    res.clearCookie("token");
+    return res.status(401).json({
+      message: "Please login to continue.",
+      success: false,
+    });
+  }
+
+  return res.status(200).json({
+    message: "User fetched successfully.",
+    user: req.user,
+    success: true,
+  });
 });

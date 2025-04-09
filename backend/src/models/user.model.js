@@ -19,7 +19,8 @@ userSchema.methods.generateAndSaveToken = async function (res) {
   });
   res.cookie("token", token, {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
+    secure: "production",
+    // secure:true,
     sameSite: "None", 
     maxAge:  parseInt(process.env.COOKIE_MAX_AGE),
   });
