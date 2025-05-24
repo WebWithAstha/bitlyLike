@@ -21,12 +21,12 @@ const LoginPage = () => {
     <div className="min-h-screen flex bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-900">
      
 
-      <div className="w-full lg:w-1/2 flex items-center mx-auto text-white/[.7] justify-center p-6">
-        <div className="w-full max-w-md bg-black/[.2] rounded-2xl shadow-xl overflow-hidden">
+      <div className="w-full lg:w-1/2 flex items-center mx-auto dark:text-white/[.7] justify-center p-6">
+        <div className="w-full max-w-md dark:bg-black/[.2] rounded-2xl shadow-xl overflow-hidden">
           <div className="p-8">
             <div className="text-center mb-8">
-              <h2 className="text-3xl font-extrabold ">Log In</h2>
-              <p className="mt-2 text-gray-200">Enter your credentials to access your account</p>
+              <h2 className="text-2xl font-extrabold ">Log In</h2>
+              <p className="mt-2 dark:text-gray-200">Enter your credentials to access your account</p>
             </div>
 
             <form onSubmit={handleLogin} className="space-y-6">
@@ -125,7 +125,7 @@ const LoginPage = () => {
           </div>
           
           <div className="px-8 py-4 bg-gray-300/[.3] border-t border-white/[.1] text-center">
-            <p className="text-sm text-gray-200">
+            <p className="text-sm dark:text-gray-200">
               Have a great experience...
             </p>
           </div>

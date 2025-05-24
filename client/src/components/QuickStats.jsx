@@ -63,7 +63,7 @@ const QuickStats = () => {
 
   return (
     quick && 
-    <div className="w-full h-96 max-w-5xl mx-auto px-6 py-8 rounded-2xl shadow-xl border border-gray-700">
+    <div className="w-full h-96 max-w-5xl mx-auto px-6 py-8 rounded-2xl border dark:border-gray-700 border-gray-300">
 
       <div className="w-full h-full">
         <ResponsiveContainer width="100%" height="100%">

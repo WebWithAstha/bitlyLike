@@ -1,131 +1,282 @@
 import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate, useParams } from 'react-router-dom';
-import {
+import { 
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip,
-  PieChart, Pie, Cell, Legend, ResponsiveContainer
+  PieChart, Pie, Cell, ResponsiveContainer, LineChart, Line
 } from 'recharts';
-import { fetchAnalytics } from '../store/actions/linkActions';
+import { ArrowLeft, TrendingUp, Eye, Monitor, Calendar } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
-const COLORS = ['#6366F1', '#60A5FA', '#34D399', '#FBBF24', '#EC4899', '#8B5CF6'];
+const CHART_COLORS = ['#1e40af', '#06b6d4', '#10b981', '#f59e0b'];
+
+// Mock data
+const mockData = {
+  timeline: [
+    { date: 'Jan 1', clicks: 45 },
+    { date: 'Jan 2', clicks: 62 },
+    { date: 'Jan 3', clicks: 38 },
+    { date: 'Jan 4', clicks: 71 },
+    { date: 'Jan 5', clicks: 89 },
+    { date: 'Jan 6', clicks: 56 },
+    { date: 'Jan 7', clicks: 94 }
+  ],
+  devices: [
+    { name: 'Desktop', value: 245 },
+    { name: 'Mobile', value: 312 },
+    { name: 'Tablet', value: 89 }
+  ],
+  browsers: [
+    { name: 'Chrome', value: 398 },
+    { name: 'Safari', value: 142 },
+    { name: 'Firefox', value: 87 },
+    { name: 'Edge', value: 43 }
+  ]
+};
+
+// Minimal Card Component
+const Card = ({ children, className = '' }) => (
+  <div className={` dark:bg-gray-800 bg-white rounded-lg border dark:border-gray-600 border-gray-100 ${className}`}>
+    {children}
+  </div>
+);
+
+// Metric Card Component
+const MetricCard = ({ icon: Icon, title, value, change }) => (
+  <Card className="p-6 shadow-md">
+    <div className="flex items-center justify-between mb-3">
+      <div className="p-2 dark:bg-gray-300 bg-blue-50 rounded-lg">
+        <Icon className="w-5 h-5 dark:text-blue-400 text-blue-600" />
+      </div>
+      {change && (
+        <div className="flex items-center text-green-600 text-sm">
+          <TrendingUp className="w-4 h-4 mr-1" />
+          +{change}%
+        </div>
+      )}
+    </div>
+    <div>
+      <p className="text-sm dark:text-white text-gray-600 mb-1">{title}</p>
+      <p className="text-2xl font-semibold dark:text-white text-gray-900">{value}</p>
+    </div>
+  </Card>
+);
+
+// Chart Container
+const ChartContainer = ({ title, children, action }) => (
+  <Card className="p-6 shadow">
+    <div className="flex items-center justify-between mb-6">
+      <h3 className="text-lg font-semibold dark:text-white text-gray-900">{title}</h3>
+      {action}
+    </div>
+    {children}
+  </Card>
+);
+
+// Custom Tooltip
+const CustomTooltip = ({ active, payload, label }) => {
+  if (active && payload && payload.length) {
+    return (
+      <div className=" bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-900 border dark:border-gray-700 border-gray-200 rounded-lg p-3 shadow-lg">
+        <p className="font-medium dark:text-white text-gray-900 mb-1">{label}</p>
+        {payload.map((entry, index) => (
+          <p key={index} className="text-sm dark:text-white text-gray-600">
+            {entry.name}: <span className="font-medium">{entry.value}</span>
+          </p>
+        ))}
+      </div>
+    );
+  }
+  return null;
+};
 
 const AnalyticsSection = () => {
-  const { selectedLinkAnalytics } = useSelector((state) => state.links);
-  const analytics = selectedLinkAnalytics || {};
-  const { id } = useParams();
-  const dispatch = useDispatch();
-  const [breakdownType, setBreakdownType] = useState('device');
+  const [viewType, setViewType] = useState('device');
+  const [isLoading, setIsLoading] = useState(true);
+
   const navigate = useNavigate();
 
   useEffect(() => {
-    dispatch(fetchAnalytics(id));
-  }, [dispatch, id]);
+    setTimeout(() => setIsLoading(false), 800);
+  }, []);
 
-  if (!analytics.clickTimeline) return null;
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-900 flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-8 h-8 border-2 border-blue-200 border-t-blue-600 rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="dark:text-white text-gray-600">Loading analytics...</p>
+        </div>
+      </div>
+    );
+  }
 
-  const clicksOverTime = Object.entries(analytics.clickTimeline).map(([date, clicks]) => ({ date, clicks }));
-  const totalClicks = clicksOverTime.reduce((sum, item) => sum + item.clicks, 0);
-  const peakDay = [...clicksOverTime].sort((a, b) => b.clicks - a.clicks)[0];
-  const deviceData = Object.entries(analytics.deviceStats || {}).map(([type, count]) => ({ type, count }));
-  const browserData = Object.entries(analytics.browserStats || {}).map(([type, count]) => ({ type, count }));
-  const breakdownData = breakdownType === 'device' ? deviceData : browserData;
+  const totalClicks = mockData.timeline.reduce((sum, item) => sum + item.clicks, 0);
+  const peakClicks = Math.max(...mockData.timeline.map(item => item.clicks));
+  const avgClicks = Math.round(totalClicks / mockData.timeline.length);
+  
+  const pieData = viewType === 'device' ? mockData.devices : mockData.browsers;
+  const totalPieValue = pieData.reduce((sum, item) => sum + item.value, 0);
 
   return (
-    <div className="bg-gray-50 dark:bg-gray-900 min-h-screen p-6 md:p-10 space-y-8">
-      <button
-        onClick={() => navigate(-1)}
-        className="inline-flex items-center text-sm font-medium px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-white hover:bg-gray-200 dark:hover:bg-gray-600 rounded-lg transition-colors"
-      >
-        ← Back
-      </button>
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        {[
-          { title: 'Total Clicks', color: 'indigo', value: totalClicks },
-          { title: 'Peak Day', color: 'blue', value: peakDay?.clicks || 0, sub: peakDay?.date || 'N/A' },
-          { title: 'Top Device', color: 'green', value: deviceData[0]?.type || 'N/A' },
-          {
-            title: 'Conversion',
-            color: 'amber',
-            value: deviceData.length > 0 ? Math.round((deviceData[0].count / totalClicks) * 100) + '%' : '0%'
-          }
-        ].map(({ title, color, value, sub }) => (
-          <div key={title} className={`bg-${color}-50 dark:bg-${color}-900 opacity-60 rounded-xl p-5 shadow-sm`}>
-            <h3 className={`text-sm font-medium uppercase tracking-wide text-${color}-600 dark:text-${color}-300`}>
-              {title}
-            </h3>
-            <p className={`mt-2 text-2xl font-bold text-${color}-800 dark:text-${color}-100`}>{value}</p>
-            {sub && <p className={`text-xs text-${color}-600 dark:text-${color}-300`}>{sub}</p>}
-          </div>
-        ))}
-      </div>
-      <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-6">
-        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-md overflow-hidden">
-          <div className="px-6 py-4 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center">
-            <h2 className="text-lg font-semibold text-gray-800 dark:text-white">Clicks Over Time</h2>
-            <span className="text-xs font-semibold bg-indigo-100 text-indigo-800 dark:bg-indigo-800 dark:text-indigo-100 px-3 py-1 rounded-full">
-              {clicksOverTime.length} types
-            </span>
-          </div>
-          <div className="p-6">
-            <ResponsiveContainer width="100%" height={250}>
-              <BarChart data={clicksOverTime} margin={{ top: 10, right: 10, left: 0, bottom: 20 }}>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e5e7eb" />
-                <XAxis dataKey="date" tick={{ fontSize: 12 }} tickLine={false} axisLine={{ stroke: '#e5e7eb' }} />
-                <YAxis tick={{ fontSize: 12 }} tickLine={false} axisLine={{ stroke: '#e5e7eb' }} />
-                <Tooltip
-                  contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
-                />
-                <Bar dataKey="clicks" fill="#6366F1" radius={[6, 6, 0, 0]} barSize={28} />
-              </BarChart>
-            </ResponsiveContainer>
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-900">
+      {/* Header */}
+      <div className=" border-b dark:border-gray-700 border-gray-100">
+        <div className="max-w-7xl mx-auto px-6 py-6">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-4">
+              <button onClick={(e)=>navigate(-1)} className="p-2 dark:bg-gray-800 dark:hover:bg-gray-600 hover:bg-gray-100 rounded-lg transition-colors">
+                <ArrowLeft className="w-5 h-5 dark:text-white text-gray-600" />
+              </button>
+              <div>
+                <h1 className="text-2xl font-semibold dark:text-white text-gray-900">Analytics</h1>
+                <p className="dark:text-white text-gray-600 text-sm mt-1">Link performance overview</p>
+              </div>
+            </div>
           </div>
         </div>
-        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-md overflow-hidden">
-          <div className="px-6 py-4 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center">
-            <h2 className="text-lg font-semibold text-gray-800 dark:text-white">
-              {breakdownType === 'device' ? 'Device' : 'Browser'} Breakdown
-            </h2>
-            <span className={`text-xs font-semibold ${breakdownType === 'device' ? 'bg-green-100 text-green-800 dark:bg-green-800 dark:text-green-100' : 'bg-pink-100 text-pink-800 dark:bg-pink-800 dark:text-pink-100'} px-3 py-1 rounded-full`}>
-              {breakdownData.length} types
-            </span>
-          </div>
-          <div className="p-6">
-            <div className="mb-4 flex justify-end">
-              <select
-                value={breakdownType}
-                onChange={(e) => setBreakdownType(e.target.value)}
-                className="text-sm px-3 py-1.5 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-              >
-                <option value="device">Device</option>
-                <option value="browser">Browser</option>
-              </select>
-            </div>
-            <ResponsiveContainer width="100%" height={250}>
-              <PieChart>
-                <Pie
-                  data={breakdownData}
-                  dataKey="count"
-                  nameKey="type"
-                  cx="50%"
-                  cy="50%"
-                  innerRadius={50}
-                  outerRadius={80}
-                  paddingAngle={3}
-                  label={({ name, percent }) => `${name} (${(percent * 100).toFixed(0)}%)`}
-                  labelLine={false}
-                >
-                  {breakdownData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} stroke="none" />
-                  ))}
-                </Pie>
-                <Tooltip
-                  formatter={(value) => [`${value} clicks`, 'Count']}
-                  contentStyle={{ borderRadius: '6px', border: 'none', boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.15)' }}
+      </div>
+
+      {/* Content */}
+      <div className="max-w-7xl mx-auto px-6 py-8">
+        {/* Metrics Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+          <MetricCard
+            icon={Eye}
+            title="Total Clicks"
+            value={totalClicks.toLocaleString()}
+            change={12}
+          />
+          <MetricCard
+            icon={TrendingUp}
+            title="Peak Performance"
+            value={peakClicks}
+            change={8}
+          />
+          <MetricCard
+            icon={Calendar}
+            title="Daily Average"
+            value={avgClicks}
+            change={5}
+          />
+          <MetricCard
+            icon={Monitor}
+            title="Top Device"
+            value="Mobile"
+          />
+        </div>
+
+        {/* Charts Grid */}
+        <div className="grid lg:grid-cols-2 gap-8">
+          {/* Timeline Chart */}
+          <ChartContainer title="Click Timeline">
+            <ResponsiveContainer width="100%" height={280}>
+              <LineChart data={mockData.timeline}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
+                <XAxis 
+                  dataKey="date" 
+                  tick={{ fill: '#64748b', fontSize: 12 }}
+                  axisLine={{ stroke: '#e2e8f0' }}
+                  tickLine={{ stroke: '#e2e8f0' }}
                 />
-                <Legend layout="vertical" verticalAlign="middle" align="right" iconType="circle" iconSize={8} />
-              </PieChart>
+                <YAxis 
+                  tick={{ fill: '#64748b', fontSize: 12 }}
+                  axisLine={false}
+                  tickLine={false}
+                />
+                <Tooltip content={<CustomTooltip />} />
+                <Line 
+                  type="monotone" 
+                  dataKey="clicks" 
+                  stroke="#1e40af" 
+                  strokeWidth={2}
+                  dot={{ fill: '#1e40af', strokeWidth: 0, r: 4 }}
+                  activeDot={{ r: 6, fill: '#1e40af' }}
+                />
+              </LineChart>
             </ResponsiveContainer>
-          </div>
+          </ChartContainer>
+
+          {/* Distribution Chart */}
+          <ChartContainer 
+            title="Traffic Distribution"
+            action={
+              <select
+                value={viewType}
+                onChange={(e) => setViewType(e.target.value)}
+                className="text-sm border dark:text-white text-gray-700 dark:border-gray-700 border-gray-200 rounded-lg px-3 py-1.5  bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-gray-600 focus:border-transparent"
+              >
+                <option className='dark:text-white text-gray-700 dark:bg-gray-700 cursor-pointer' value="device">Device</option>
+                <option className='dark:text-white text-gray-700 dark:bg-gray-700 cursor-pointer' value="browser">Browser</option>
+              </select>
+            }
+          >
+            <div className="flex items-center justify-between">
+              <ResponsiveContainer width="60%" height={240}>
+                <PieChart>
+                  <Pie
+                    data={pieData}
+                    dataKey="value"
+                    nameKey="name"
+                    cx="50%"
+                    cy="50%"
+                    innerRadius={50}
+                    outerRadius={90}
+                    paddingAngle={2}
+                  >
+                    {pieData.map((entry, index) => (
+                      <Cell 
+                        key={`cell-${index}`} 
+                        fill={CHART_COLORS[index % CHART_COLORS.length]}
+                      />
+                    ))}
+                  </Pie>
+                  <Tooltip content={<CustomTooltip />} />
+                </PieChart>
+              </ResponsiveContainer>
+              
+              <div className="w-40 space-y-3">
+                {pieData.map((item, index) => {
+                  const percentage = Math.round((item.value / totalPieValue) * 100);
+                  return (
+                    <div key={item.name} className="flex items-center space-x-3">
+                      <div 
+                        className="w-3 h-3 rounded-full flex-shrink-0"
+                        style={{ backgroundColor: CHART_COLORS[index % CHART_COLORS.length] }}
+                      />
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium dark:text-white text-gray-900 truncate">
+                          {item.name}
+                        </p>
+                        <p className="text-xs dark:text-white opacity-70 text-gray-600">
+                          {item.value} ({percentage}%)
+                        </p>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </ChartContainer>
+        </div>
+
+        {/* Summary Stats */}
+        <div className="mt-8 shadow">
+          <Card className="p-6 dark:bg-gradient-to-br bg-white dark:from-gray-700 dark:to-gray-900">
+            <h3 className="text-lg font-semibold dark:text-white text-gray-900 mb-4">Performance Summary</h3>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="text-center">
+                <p className="text-2xl font-semibold text-green-600 mb-1">94.2%</p>
+                <p className="text-sm dark:text-white text-gray-600">Engagement Rate</p>
+              </div>
+              <div className="text-center">
+                <p className="text-2xl font-semibold text-blue-600 mb-1">0.8s</p>
+                <p className="text-sm dark:text-white text-gray-600">Avg Load Time</p>
+              </div>
+              <div className="text-center">
+                <p className="text-2xl font-semibold text-purple-600 mb-1">28</p>
+                <p className="text-sm dark:text-white text-gray-600">Countries</p>
+              </div>
+            </div>
+          </Card>
         </div>
       </div>
     </div>
