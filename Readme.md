@@ -1,22 +1,22 @@
 # 🔗 Bitly Like – Link Analytics Dashboard
 
-A full-stack mini Bitly clone built as part of an SDE assignment. This app allows users to shorten long URLs and view detailed analytics including click counts, devices, and more.
+A full-stack web application that allows users to shorten long URLs and view detailed analytics such as click counts, devices, and more. Inspired by the core functionality of Bitly, this project is built from scratch with a unique UI and custom implementation to showcase full-stack development and micro-SaaS architecture.
 
 ---
 
-## 🧪 Assignment: Micro-SaaS – Link Analytics Dashboard
+## 🧩 Project Overview
 
-### 🧩 Project Brief
-Build a full-stack URL shortener and analytics dashboard. Users can create shortened links and track their performance — including clicks, locations, and devices.
+This platform replicates the key functionality of modern URL shorteners while offering an original design and experience. Users can create short links, manage them, and track their performance via a feature-rich analytics dashboard.
 
 ---
 
 ## 🔐 Authentication
 
-- JWT-based login using a hardcoded user.
-- Credentials to test:
+- JWT-based login system.
+- Sample test credentials:
+
   ```
-  Email: intern@dacoid.com  
+  Email: test@gmail.com  
   Password: Test123
   ```
 - Each shortened link is associated with a user ID for multi-user support.
@@ -122,16 +122,6 @@ Password: Test123
 
 ---
 
-## ✅ Evaluation Criteria
-
-- [x] URL shortening & redirection
-- [x] Click & device tracking
-- [x] JWT-based authentication
-- [x] Responsive and clean UI
-- [x] Async operations for analytics logging
-- [x] Deployment & documentation
-
----
 
 ## 🙌 Author
 
