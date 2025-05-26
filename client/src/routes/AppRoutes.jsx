@@ -8,7 +8,6 @@ import AnalyticsSection from '../components/AnalyticsSection';
 
 const AppRoutes = () => {
   const { isAuthenticated} = useSelector((state) => state.auth);
-  console.log(isAuthenticated)
   return (
     <Routes>
       <Route path="/" element={<LoginPage/>}/>

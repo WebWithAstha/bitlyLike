@@ -10,10 +10,10 @@ import {
 
 export const fetchAllLinks = () => async (dispatch) => {
   dispatch(setLoading(true));
-  console.log("at fetchAllLink")
+  // console.log("at fetchAllLink")
   try {
     const res = await axios.get('/links');
-    console.log(res)
+    // console.log(res)
     dispatch(setLinks(res.data));
   } catch (error) {
     console.log(error?.response?.data?.message)
@@ -25,10 +25,13 @@ export const fetchAllLinks = () => async (dispatch) => {
 export const createShortLink = (formData) => async (dispatch) => {
   dispatch(setLoading(true));
   try {
-    console.log(formData)
+    // console.log(formData)
     const res = await axios.post('/links/shorten', formData);
-    console.log(res)
-    dispatch(fetchAllLinks()); // Refresh list after creation
+    // console.log(res)
+    console.log(res.data);
+    dispatch(addLink(res.data));
+    return res.data; 
+    // dispatch(fetchAllLinks()); // Refresh list after creation
   } catch (error) {
     dispatch(setError(error.message));
   }

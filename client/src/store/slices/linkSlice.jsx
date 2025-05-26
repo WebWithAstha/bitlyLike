@@ -32,6 +32,9 @@ const linkSlice = createSlice({
     clearAnalytics: (state) => {
       state.selectedLinkAnalytics = null;
     },
+    addLink: (state, action) => {
+      state.allLinks.push(action.payload);
+    },
   },
 });
 
@@ -42,6 +45,7 @@ export const {
   setError,
   setQuick,
   clearAnalytics,
+  addLink,
 } = linkSlice.actions;
 
 export default linkSlice.reducer;

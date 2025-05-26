@@ -27,6 +27,11 @@ const LoginPage = () => {
             <div className="text-center mb-8">
               <h2 className="text-2xl font-extrabold ">Log In</h2>
               <p className="mt-2 dark:text-gray-200">Enter your credentials to access your account</p>
+              <div className="mt-4 bg-blue-100 dark:bg-blue-900/40 text-blue-800 dark:text-blue-200 rounded p-2 text-xs">
+                <strong>Test Account:</strong> <br />
+                Email: <span className="font-mono">test@gmail.com</span><br />
+                Password: <span className="font-mono">Test123</span>
+              </div>
             </div>
 
             <form onSubmit={handleLogin} className="space-y-6">

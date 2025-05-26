@@ -26,16 +26,16 @@ const Dashboard = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-900">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-7xl mx-auto px-2 sm:px-4 lg:px-8 py-4 sm:py-8">
         {/* Header Section */}
         <Header handleLogout={handleLogout} />
 
         {/* Main Content */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-8">
           {/* Link Creation Card */}
-          <div className="lg:col-span-1">
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
-              <h2 className="text-lg font-semibold text-gray-800 dark:text-white mb-4">
+          <div className="lg:col-span-1 order-2 lg:order-1 mt-4 lg:mt-0">
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 sm:p-6">
+              <h2 className="text-base sm:text-lg font-semibold text-gray-800 dark:text-white mb-2 sm:mb-4">
                 Create New Link
               </h2>
               <LinkForm />
@@ -43,9 +43,9 @@ const Dashboard = () => {
           </div>
 
           {/* Analytics Preview Card */}
-          <div className="lg:col-span-2">
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
-              <h2 className="text-lg font-semibold text-gray-800 dark:text-white mb-4">
+          <div className="lg:col-span-2 order-1 lg:order-2">
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 sm:p-6">
+              <h2 className="text-base sm:text-lg font-semibold text-gray-800 dark:text-white mb-2 sm:mb-4">
                 Quick Analytics
               </h2>
               {/* <AnalyticsSection /> */}
@@ -55,17 +55,17 @@ const Dashboard = () => {
         </div>
 
         {/* Links Table Card */}
-        <div className="mt-8">
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
-            <h2 className="text-lg font-semibold text-gray-800 dark:text-white mb-4">
+        <div className="mt-4 sm:mt-8">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 sm:p-6">
+            <h2 className="text-base sm:text-lg font-semibold text-gray-800 dark:text-white mb-2 sm:mb-4">
               All Links
             </h2>
             {loading ? (
-              <div className="flex justify-center items-center py-12">
-                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+              <div className="flex justify-center items-center py-8 sm:py-12">
+                <div className="animate-spin rounded-full h-10 w-10 sm:h-12 sm:w-12 border-t-2 border-b-2 border-blue-500"></div>
               </div>
             ) : (
-              <div className="overflow-hidden">
+              <div className="overflow-x-auto">
                 <LinksTable links={allLinks} />
               </div>
             )}

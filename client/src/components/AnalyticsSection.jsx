@@ -119,16 +119,16 @@ const AnalyticsSection = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-900">
       {/* Header */}
-      <div className=" border-b dark:border-gray-700 border-gray-100">
-        <div className="max-w-7xl mx-auto px-6 py-6">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-4">
+      <div className="border-b dark:border-gray-700 border-gray-100">
+        <div className="max-w-7xl mx-auto px-2 sm:px-4 md:px-6 py-4 sm:py-6">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 sm:gap-4">
+            <div className="flex items-center space-x-2 sm:space-x-4">
               <button onClick={(e)=>navigate(-1)} className="p-2 dark:bg-gray-800 dark:hover:bg-gray-600 hover:bg-gray-100 rounded-lg transition-colors">
                 <ArrowLeft className="w-5 h-5 dark:text-white text-gray-600" />
               </button>
               <div>
-                <h1 className="text-2xl font-semibold dark:text-white text-gray-900">Analytics</h1>
-                <p className="dark:text-white text-gray-600 text-sm mt-1">Link performance overview</p>
+                <h1 className="text-xl sm:text-2xl font-semibold dark:text-white text-gray-900">Analytics</h1>
+                <p className="dark:text-white text-gray-600 text-xs sm:text-sm mt-1">Link performance overview</p>
               </div>
             </div>
           </div>
@@ -136,9 +136,9 @@ const AnalyticsSection = () => {
       </div>
 
       {/* Content */}
-      <div className="max-w-7xl mx-auto px-6 py-8">
+      <div className="max-w-7xl mx-auto px-2 sm:px-4 md:px-6 py-4 sm:py-8">
         {/* Metrics Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-6 sm:mb-8">
           <MetricCard
             icon={Eye}
             title="Total Clicks"
@@ -165,10 +165,10 @@ const AnalyticsSection = () => {
         </div>
 
         {/* Charts Grid */}
-        <div className="grid lg:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-8">
           {/* Timeline Chart */}
           <ChartContainer title="Click Timeline">
-            <ResponsiveContainer width="100%" height={280}>
+            <ResponsiveContainer width="100%" height={220} minHeight={180}>
               <LineChart data={mockData.timeline}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
                 <XAxis 
@@ -202,15 +202,15 @@ const AnalyticsSection = () => {
               <select
                 value={viewType}
                 onChange={(e) => setViewType(e.target.value)}
-                className="text-sm border dark:text-white text-gray-700 dark:border-gray-700 border-gray-200 rounded-lg px-3 py-1.5  bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-gray-600 focus:border-transparent"
+                className="text-xs sm:text-sm border dark:text-white text-gray-700 dark:border-gray-700 border-gray-200 rounded-lg px-2 sm:px-3 py-1 sm:py-1.5 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-gray-600 focus:border-transparent"
               >
                 <option className='dark:text-white text-gray-700 dark:bg-gray-700 cursor-pointer' value="device">Device</option>
                 <option className='dark:text-white text-gray-700 dark:bg-gray-700 cursor-pointer' value="browser">Browser</option>
               </select>
             }
           >
-            <div className="flex items-center justify-between">
-              <ResponsiveContainer width="60%" height={240}>
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+              <ResponsiveContainer width="100%" height={180} minHeight={140} className="sm:w-3/5">
                 <PieChart>
                   <Pie
                     data={pieData}
@@ -232,8 +232,7 @@ const AnalyticsSection = () => {
                   <Tooltip content={<CustomTooltip />} />
                 </PieChart>
               </ResponsiveContainer>
-              
-              <div className="w-40 space-y-3">
+              <div className="w-full sm:w-40 space-y-2 sm:space-y-3">
                 {pieData.map((item, index) => {
                   const percentage = Math.round((item.value / totalPieValue) * 100);
                   return (
@@ -259,10 +258,10 @@ const AnalyticsSection = () => {
         </div>
 
         {/* Summary Stats */}
-        <div className="mt-8 shadow">
-          <Card className="p-6 dark:bg-gradient-to-br bg-white dark:from-gray-700 dark:to-gray-900">
-            <h3 className="text-lg font-semibold dark:text-white text-gray-900 mb-4">Performance Summary</h3>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="mt-6 sm:mt-8 shadow">
+          <Card className="p-4 sm:p-6 dark:bg-gradient-to-br bg-white dark:from-gray-700 dark:to-gray-900">
+            <h3 className="text-base sm:text-lg font-semibold dark:text-white text-gray-900 mb-2 sm:mb-4">Performance Summary</h3>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
               <div className="text-center">
                 <p className="text-2xl font-semibold text-green-600 mb-1">94.2%</p>
                 <p className="text-sm dark:text-white text-gray-600">Engagement Rate</p>
