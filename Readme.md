@@ -16,7 +16,7 @@ This platform replicates the key functionality of modern URL shorteners while of
 - Sample test credentials:
 
   ```
-  Email: intern@dacoid.com  
+  Email: test@gmail.com  
   Password: Test123
   ```
 - Each shortened link is associated with a user ID for multi-user support.
